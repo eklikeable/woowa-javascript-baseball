@@ -1,5 +1,12 @@
+const MissionUtils = require('@woowacourse/mission-utils');
+
 class App {
-  play() {}
+  play() {
+    // prettier-ignore
+    const guessNum = MissionUtils.Random.pickUniqueNumbersInRange(1, 9, 3).sort();
+    console.log(`=== Guess Numbers : ${guessNum} ===`);
+  }
 }
 
-module.exports = App;
+const app = new App();
+app.play();
