@@ -1,4 +1,4 @@
-const MissionUtils = require('@woowacourse/mission-utils');
+const { Console, Random } = require('@woowacourse/mission-utils');
 
 class App {
   constructor(guessNum) {
@@ -29,36 +29,64 @@ class App {
   }
 
   checkInput(input) {
-    // 입력값이 3개가 아닌경우
+    input.forEach((el) => {
+      if (isNaN(parseInt(el)) || el === 0) {
+        throw new RangeError();
+      }
+    });
     if (input.length !== 3) {
       throw new RangeError();
     }
-    // 중복값이 있는경우
     if (new Set(input).size !== 3) {
-      throw new Error();
+      throw new RangeError();
     }
-    // 숫자가 아닌 값이 입력 될 경우
-    input.forEach((el) => {
-      if (isNaN(parseInt(el))) {
-        throw new TypeError();
-      }
-    });
     return true;
   }
-  gameProceed(userNumbers, guessNum) {}
-  printScore(strike, ball) {}
+
+  gameProceed(userNumbers, guessNum) {
+    let strike = 0;
+    let ball = 0;
+    for (let i = 0; i < guessNum.length; i++) {
+      const index = userNumbers.indexOf(guessNum[i].toString());
+      if (index === i) {
+        strike += 1;
+      }
+      if (index !== -1 && index !== i) {
+        ball += 1;
+      }
+    }
+    this.printScore(strike, ball);
+    if (this.guessNum.join('') === userNumbers.join('')) {
+      return this.printWin();
+    }
+    this.getInput();
+  }
+
+  printScore(strike, ball) {
+    if (ball === 0 && strike === 0) {
+      return Console.print('낫싱');
+    }
+    if (strike === 0) {
+      return Console.print(`${ball}볼`);
+    }
+    if (ball === 0) {
+      return Console.print(`${strike}스트라이크`);
+    }
+    return Console.print(`${ball}볼 ${strike}스트라이크`);
+  }
 
   printWin() {
-    MissionUtils.Console.print('3개의 숫자를 모두 맞히셨습니다! 게임 종료');
-    MissionUtils.Console.readLine(
-      '게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.',
+    Console.print('3개의 숫자를 모두 맞히셨습니다! 게임 종료');
+    Console.readLine(
+      '게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.\n',
       (answer) => {
         switch (answer) {
           case '1':
-            this.play();
+            this.guessNum = this.generateGuessNum();
+            this.getInput();
             break;
           case '2':
-            MissionUtils.Console.close();
+            Console.close();
             break;
           default:
             this.printWin();
@@ -67,5 +95,7 @@ class App {
     );
   }
 }
+
 const app = new App();
 app.play();
+module.exports = App;
