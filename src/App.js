@@ -1,27 +1,33 @@
 const MissionUtils = require('@woowacourse/mission-utils');
 
 class App {
+  constructor(guessNum) {
+    this.guessNum = this.generateGuessNum();
+  }
+  generateGuessNum() {
+    const computer = [];
+    while (computer.length < 3) {
+      const number = Random.pickNumberInRange(1, 9);
+      if (!computer.includes(number)) {
+        computer.push(number);
+      }
+    }
+    return computer;
+  }
   play() {
-    // prettier-ignore
-    const guessNum = MissionUtils.Random.pickUniqueNumbersInRange(1, 9, 3).sort();
-    MissionUtils.Console.print(`=== Guess Numbers : ${guessNum} ===`);
-
-    MissionUtils.Console.print('숫자 야구 게임을 시작합니다');
-    MissionUtils.Console.readLine('숫자를 입력해주세요.', (answer) => {
+    Console.print('숫자 야구 게임을 시작합니다');
+    this.getInput();
+  }
+  getInput() {
+    Console.print(`=== 테스트용 정답 : ${this.guessNum} ===`);
+    Console.readLine('숫자를 입력해주세요 : ', (answer) => {
       const userNumbers = answer.split('');
-      try {
-        if (this.checkInput(userNumbers)) {
-          // MissionUtils.Console.print('=== valid input ===');
-        }
-        if (answer === guessNum.join('')) {
-          this.printWin();
-        }
-      } catch (err) {
-        // MissionUtils.Console.print('=== invalid input ===');
-        MissionUtils.Console.close();
+      if (this.checkInput(userNumbers)) {
+        this.gameProceed(userNumbers, this.guessNum);
       }
     });
   }
+
   checkInput(input) {
     // 입력값이 3개가 아닌경우
     if (input.length !== 3) {
@@ -39,6 +45,9 @@ class App {
     });
     return true;
   }
+  gameProceed(userNumbers, guessNum) {}
+  printScore(strike, ball) {}
+
   printWin() {
     MissionUtils.Console.print('3개의 숫자를 모두 맞히셨습니다! 게임 종료');
     MissionUtils.Console.readLine(
